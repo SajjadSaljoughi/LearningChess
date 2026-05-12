@@ -2,6 +2,8 @@
 
 This project is an interactive chess learning application developed by Sajjad Saljoughi. It aims to teach chess from absolute beginner to advanced levels, based on the principles outlined in the book **"Fundamental Chess Theory" by Reuven Fine** (Maizelis is the author/editor of a specific edition or related work, but Reuven Fine is the widely recognized author of "Fundamental Chess Theory").
 
+![Grayscale Gradiant](images/game.png)
+
 ## 🚀 Features
 
 *   **Interactive Learning:** Comprehensive chess education starting from the very basics to advanced strategies, directly inspired by "Fundamental Chess Theory".
