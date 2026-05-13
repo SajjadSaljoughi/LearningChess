@@ -1,6 +1,5 @@
 import pygame,sys
 from pygame import surface
-
 from play import Play
 
 class Button:

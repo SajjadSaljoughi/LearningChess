@@ -2,6 +2,7 @@ import pygame, sys
 from color import Color
 from button import Button
 from play import Play
+from piece import Piece
 
 def draw_menu(surface):
     pygame.draw.rect(surface, (0, 0, 0), pygame.Rect(0, 0, 400, 400), 4)
@@ -28,6 +29,7 @@ buttons = [
 ]
 current_state = "menu"
 play_page = Play(800, 600, "Player VS Player", "play")
+return_btn = Button(50, 90, 100, 60, "Return", "return")
 
 while True:
     mouse_pos = pygame.mouse.get_pos()
@@ -50,11 +52,15 @@ while True:
                             pygame.quit()
                             sys.exit()
             elif current_state == "play":
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        current_state = "menu"
+                menu_x = mouse_pos[0]
+                menu_y = mouse_pos[1] - 400
+                menu_mouse_pos = (menu_x, menu_y)
+                if return_btn.rect.collidepoint(menu_mouse_pos):
+                    current_state = "menu"
 
     if current_state == "menu":
+        background = pygame.image.load("images\\Chess_GameBoard.png").convert()
+        background = pygame.transform.scale(background, (800, 600))
         screen.blit(background, (0, 0))
         screen.blit(dark_overlay, (0, 0))
         menu_surface.fill((255, 255, 255))
@@ -67,8 +73,35 @@ while True:
         screen.blit(menu_surface, (800//2 - 200, 600//2 - 200))
     elif current_state == "play":
         background = pygame.image.load("images\\Chess_GameBoard.png").convert()
-        background = pygame.transform.scale(background, (800, 600))
-        screen.blit(background, (0, 0))
+        background = pygame.transform.scale(background, (600, 600))
+        screen.blit(background, (200, 0))
+        screen.blit(dark_overlay, (200, 0))
+        side_menu = pygame.Surface((200, 600))
+        side_menu.fill((255, 255, 255))
+        screen.blit(side_menu, (0, 0))
+        menu_x = mouse_pos[0]
+        menu_y = mouse_pos[1] - 400
+        menu_mouse_pos = (menu_x, menu_y)
+        return_btn.draw(side_menu, menu_mouse_pos,font_btn)
+        screen.blit(side_menu, (0, 400))
+        pieces = Piece()
+        screen.blit(pieces.scaled_pawn_white_image, (200, 460))
+        screen.blit(pieces.scaled_pawn_white_image, (275, 460))
+        screen.blit(pieces.scaled_pawn_white_image, (350, 460))
+        screen.blit(pieces.scaled_pawn_white_image, (425, 460))
+        screen.blit(pieces.scaled_pawn_white_image, (500, 460))
+        screen.blit(pieces.scaled_pawn_white_image, (575, 460))
+        screen.blit(pieces.scaled_pawn_white_image, (650, 460))
+        screen.blit(pieces.scaled_pawn_white_image, (725, 460))
+        #----------------------------------------------------------------
+        screen.blit(pieces.scaled_pawn_black_image, (200, 75))
+        screen.blit(pieces.scaled_pawn_black_image, (275, 75))
+        screen.blit(pieces.scaled_pawn_black_image, (350, 75))
+        screen.blit(pieces.scaled_pawn_black_image, (425, 75))
+        screen.blit(pieces.scaled_pawn_black_image, (500, 75))
+        screen.blit(pieces.scaled_pawn_black_image, (575, 75))
+        screen.blit(pieces.scaled_pawn_black_image, (650, 75))
+        screen.blit(pieces.scaled_pawn_black_image, (725, 75))
     elif current_state == "learn":
         ...
     pygame.display.update()
