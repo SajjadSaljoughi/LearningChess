@@ -3,6 +3,7 @@ from color import Color
 from button import Button
 from play import Play
 from piece import Piece
+from board import Board
 
 def draw_menu(surface):
     pygame.draw.rect(surface, (0, 0, 0), pygame.Rect(0, 0, 400, 400), 4)
@@ -30,6 +31,8 @@ buttons = [
 current_state = "menu"
 play_page = Play(800, 600, "Player VS Player", "play")
 return_btn = Button(50, 90, 100, 60, "Return", "return")
+pieces = Piece()
+board = Board()
 
 while True:
     mouse_pos = pygame.mouse.get_pos()
@@ -55,6 +58,12 @@ while True:
                 menu_x = mouse_pos[0]
                 menu_y = mouse_pos[1] - 400
                 menu_mouse_pos = (menu_x, menu_y)
+                selected_square = board.get_square(mouse_pos)
+                if selected_square:
+                    row, col = selected_square
+                    board.set_row_and_col(row, col)
+                else:
+                    board.clear()
                 if return_btn.rect.collidepoint(menu_mouse_pos):
                     current_state = "menu"
 
@@ -72,10 +81,9 @@ while True:
             btn.draw(menu_surface, menu_mouse_pos,font_btn)
         screen.blit(menu_surface, (800//2 - 200, 600//2 - 200))
     elif current_state == "play":
-        background = pygame.image.load("images\\Chess_GameBoard.png").convert()
+        background = pygame.image.load("images\\New_Chess_GameBoard.png").convert()
         background = pygame.transform.scale(background, (600, 600))
         screen.blit(background, (200, 0))
-        screen.blit(dark_overlay, (200, 0))
         side_menu = pygame.Surface((200, 600))
         side_menu.fill((255, 255, 255))
         screen.blit(side_menu, (0, 0))
@@ -84,24 +92,9 @@ while True:
         menu_mouse_pos = (menu_x, menu_y)
         return_btn.draw(side_menu, menu_mouse_pos,font_btn)
         screen.blit(side_menu, (0, 400))
-        pieces = Piece()
-        screen.blit(pieces.scaled_pawn_white_image, (200, 460))
-        screen.blit(pieces.scaled_pawn_white_image, (275, 460))
-        screen.blit(pieces.scaled_pawn_white_image, (350, 460))
-        screen.blit(pieces.scaled_pawn_white_image, (425, 460))
-        screen.blit(pieces.scaled_pawn_white_image, (500, 460))
-        screen.blit(pieces.scaled_pawn_white_image, (575, 460))
-        screen.blit(pieces.scaled_pawn_white_image, (650, 460))
-        screen.blit(pieces.scaled_pawn_white_image, (725, 460))
-        #----------------------------------------------------------------
-        screen.blit(pieces.scaled_pawn_black_image, (200, 75))
-        screen.blit(pieces.scaled_pawn_black_image, (275, 75))
-        screen.blit(pieces.scaled_pawn_black_image, (350, 75))
-        screen.blit(pieces.scaled_pawn_black_image, (425, 75))
-        screen.blit(pieces.scaled_pawn_black_image, (500, 75))
-        screen.blit(pieces.scaled_pawn_black_image, (575, 75))
-        screen.blit(pieces.scaled_pawn_black_image, (650, 75))
-        screen.blit(pieces.scaled_pawn_black_image, (725, 75))
+        if board.is_highlight:
+            board.highlight_square(screen)
+        board.draw(screen, pieces)
     elif current_state == "learn":
-        ...
+        print("Not implemented yet")
     pygame.display.update()
