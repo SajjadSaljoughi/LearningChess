@@ -8,6 +8,7 @@ class Board:
         self.row = None
         self.col = None
         self.is_highlight = False
+        self.turn = "Player1"
 
         self.board = [
             ["br", "bn", "bb", "bq", "bk", "bb", "bn", "br"],
@@ -35,18 +36,36 @@ class Board:
                     )
 
     def move_piece(self, start, end):
+        if self.turn == "Player1":
+            self.turn = "Player2"
+        else:
+            self.turn = "Player1"
         start_row, start_col = start
         end_row, end_col = end
 
         self.board[end_row][end_col] = self.board[start_row][start_col]
         self.board[start_row][start_col] = None
 
+    def attack_piece(self):
+        attacks = []
+        row = self.row
+        col = self.col
+        if self.board[row][col] == "wp" and \
+                (self.board[row - 1][col - 1] is not None or
+                self.board[row - 1][col + 1] is not None):
+            if self.board[row - 1][col - 1].startswith("b"):
+                attacks.append(((row - 1), (col - 1)))
+            if self.board[row - 1][col + 1].startswith("b"):
+                attacks.append(((row - 1), (col + 1)))
+
+        return attacks
+
     def get_pawn_moves(self):
         moves = []
         row = self.row
         col = self.col
         # White pawn
-        if self.board[row][col] == "wp":
+        if self.board[row][col] == "wp" and self.turn == "Player1":
             # One square forward
             if row - 1 >= 0 and self.board[row - 1][col] is None:
                 moves.append((row - 1, col))
@@ -54,12 +73,12 @@ class Board:
                 # Two squares forward on first move
                 if row == 6 and self.board[row - 2][col] is None:
                     moves.append((row - 2, col))
-        elif self.board[row][col] == "bp":
+        elif self.board[row][col] == "bp" and self.turn == "Player2":
             # One Square forward
             if row + 1 >= 0 and self.board[row + 1][col] is None:
                 moves.append((row + 1, col))
 
-                #Two squares forward on first move
+                # Two squares forward on first move
                 if row == 1 and self.board[row + 2][col] is None:
                     moves.append((row + 2, col))
         return moves
@@ -86,28 +105,32 @@ class Board:
         self.col = None
         self.is_highlight = False
 
-    def highlight_available_square(self, surface, row, col):
-        highlight = pygame.Surface(
-            (self.square_size, self.square_size),
-            pygame.SRCALPHA
-        )
-
-        highlight.fill((0, 255, 0, 180))
-
-        x = self.x + col * self.square_size
-        y = self.y + row * self.square_size
-
-        surface.blit(highlight, (x, y))
+    def highlight_available_square(self, surface, row, col, mode="move"):
+        if mode == "move":
+            highlight = pygame.Surface(
+                (self.square_size, self.square_size),
+                pygame.SRCALPHA
+            )
+            highlight.fill((0, 255, 0, 180))
+            x = self.x + col * self.square_size
+            y = self.y + row * self.square_size
+            surface.blit(highlight, (x, y))
+        elif mode == "attack":
+            highlight = pygame.Surface(
+                (self.square_size, self.square_size),
+                pygame.SRCALPHA
+            )
+            highlight.fill((255, 0, 0, 180))
+            x = self.x + col * self.square_size
+            y = self.y + row * self.square_size
+            surface.blit(highlight, (x, y))
 
     def highlight_square(self, surface):
         highlight = pygame.Surface(
             (self.square_size, self.square_size),
             pygame.SRCALPHA
         )
-
         highlight.fill((255, 255, 0, 180))
-
         x = self.x + self.col * self.square_size
         y = self.y + self.row * self.square_size
-
         surface.blit(highlight, (x, y))

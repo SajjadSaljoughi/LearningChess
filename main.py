@@ -65,15 +65,22 @@ while True:
                     row, col = selected_square
                     board.set_row_and_col(row, col)
                     # If a pawn is already selected
-                    if board.board[row][col]=="bp" or \
-                        board.board[row][col]=="wp":
-                        available_moves.clear()
-                        selected_square_piece = None
-                        available_moves = board.get_pawn_moves()
-                        selected_square_piece = selected_square
-                    if selected_square in available_moves:
-                        board.move_piece(selected_square_piece,selected_square)
-                        board.is_highlight = False
+                    if board.turn == "Player1":
+                        if board.board[row][col]=="wp":
+                            available_moves.clear()
+                            available_moves = board.get_pawn_moves()
+                            selected_square_piece = selected_square
+                        if selected_square in available_moves:
+                            board.move_piece(selected_square_piece,selected_square)
+                            board.is_highlight = False
+                    else:
+                        if board.board[row][col]=="bp":
+                            available_moves.clear()
+                            available_moves = board.get_pawn_moves()
+                            selected_square_piece = selected_square
+                        if selected_square in available_moves:
+                            board.move_piece(selected_square_piece, selected_square)
+                            board.is_highlight = False
 
                 else:
                     board.clear()
@@ -110,6 +117,10 @@ while True:
             moves = board.get_pawn_moves()
             for row,col in moves:
                 board.highlight_available_square(screen, row, col)
+            attacks = board.attack_piece()
+            for row,col in attacks:
+                board.highlight_available_square(screen, row, col, mode="attack")
+
         board.draw(screen, pieces)
     elif current_state == "learn":
         print("Not implemented yet")
