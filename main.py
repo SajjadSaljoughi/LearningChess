@@ -33,6 +33,8 @@ play_page = Play(800, 600, "Player VS Player", "play")
 return_btn = Button(50, 90, 100, 60, "Return", "return")
 pieces = Piece()
 board = Board()
+available_moves = []
+selected_square_piece = None
 
 while True:
     mouse_pos = pygame.mouse.get_pos()
@@ -62,6 +64,17 @@ while True:
                 if selected_square:
                     row, col = selected_square
                     board.set_row_and_col(row, col)
+                    # If a pawn is already selected
+                    if board.board[row][col]=="bp" or \
+                        board.board[row][col]=="wp":
+                        available_moves.clear()
+                        selected_square_piece = None
+                        available_moves = board.get_pawn_moves()
+                        selected_square_piece = selected_square
+                    if selected_square in available_moves:
+                        board.move_piece(selected_square_piece,selected_square)
+                        board.is_highlight = False
+
                 else:
                     board.clear()
                 if return_btn.rect.collidepoint(menu_mouse_pos):
@@ -94,6 +107,9 @@ while True:
         screen.blit(side_menu, (0, 400))
         if board.is_highlight:
             board.highlight_square(screen)
+            moves = board.get_pawn_moves()
+            for row,col in moves:
+                board.highlight_available_square(screen, row, col)
         board.draw(screen, pieces)
     elif current_state == "learn":
         print("Not implemented yet")

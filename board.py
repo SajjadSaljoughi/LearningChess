@@ -34,6 +34,36 @@ class Board:
                         (x, y)
                     )
 
+    def move_piece(self, start, end):
+        start_row, start_col = start
+        end_row, end_col = end
+
+        self.board[end_row][end_col] = self.board[start_row][start_col]
+        self.board[start_row][start_col] = None
+
+    def get_pawn_moves(self):
+        moves = []
+        row = self.row
+        col = self.col
+        # White pawn
+        if self.board[row][col] == "wp":
+            # One square forward
+            if row - 1 >= 0 and self.board[row - 1][col] is None:
+                moves.append((row - 1, col))
+
+                # Two squares forward on first move
+                if row == 6 and self.board[row - 2][col] is None:
+                    moves.append((row - 2, col))
+        elif self.board[row][col] == "bp":
+            # One Square forward
+            if row + 1 >= 0 and self.board[row + 1][col] is None:
+                moves.append((row + 1, col))
+
+                #Two squares forward on first move
+                if row == 1 and self.board[row + 2][col] is None:
+                    moves.append((row + 2, col))
+        return moves
+
     def get_square(self, mouse_pos):
         mouse_x, mouse_y = mouse_pos
 
@@ -55,6 +85,19 @@ class Board:
         self.row = None
         self.col = None
         self.is_highlight = False
+
+    def highlight_available_square(self, surface, row, col):
+        highlight = pygame.Surface(
+            (self.square_size, self.square_size),
+            pygame.SRCALPHA
+        )
+
+        highlight.fill((0, 255, 0, 180))
+
+        x = self.x + col * self.square_size
+        y = self.y + row * self.square_size
+
+        surface.blit(highlight, (x, y))
 
     def highlight_square(self, surface):
         highlight = pygame.Surface(
