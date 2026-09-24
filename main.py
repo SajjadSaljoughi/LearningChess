@@ -12,13 +12,15 @@ def draw_menu(surface):
     surface.blit(title, title_rect)
 
 pygame.init()
-screen = pygame.display.set_mode((800, 600))
+screen = pygame.display.set_mode((800, 620))
 pygame.display.set_caption("Learning Chess With Maizelis")
 font_title = pygame.font.SysFont("Times New Roman", 32)
 font_btn = pygame.font.SysFont("Arial", 28)
+font_coordinates = pygame.font.SysFont("Arial", 18)
+font_moves = pygame.font.SysFont("Arial", 20)
 background = pygame.image.load("images\\Chess_GameBoard.png").convert()
-background = pygame.transform.scale(background, (800, 600))
-dark_overlay = pygame.Surface((800, 600))
+background = pygame.transform.scale(background, (800, 620))
+dark_overlay = pygame.Surface((800, 620))
 dark_overlay.set_alpha(120)
 dark_overlay.fill((0, 0, 0))
 menu_surface = pygame.Surface((400, 400))
@@ -29,17 +31,40 @@ buttons = [
     Button(50, 270, 300, 60, "Quit", "quit"),
 ]
 current_state = "menu"
-play_page = Play(800, 600, "Player VS Player", "play")
-return_btn = Button(50, 90, 100, 60, "Return", "return")
+play_page = Play(800, 620, "Player VS Player", "play")
+return_btn = Button(50, 150, 100, 60, "Return", "return")
 pieces = Piece()
 board = Board()
 available_moves = []
 selected_square_piece = None
+move_history = []
+
+
+def draw_move_history(surface, font, move_history):
+    for i in range(0, len(move_history), 2):
+
+        move_number = i // 2 + 1
+
+        white_move = move_history[i]
+
+        if i + 1 < len(move_history):
+            black_move = move_history[i + 1]
+        else:
+            black_move = ""
+
+        text = f"{move_number}. {white_move} {black_move}"
+
+        text_surface = font.render(text, True, (0, 0, 0))
+
+        surface.blit(
+            text_surface,
+            (20, 180 + (i // 2) * 30)
+        )
 
 while True:
     mouse_pos = pygame.mouse.get_pos()
     menu_x = mouse_pos[0] - (800 // 2 - 200)
-    menu_y = mouse_pos[1] - (600 // 2 - 200)
+    menu_y = mouse_pos[1] - (620 // 2 - 200)
     menu_mouse_pos = (menu_x, menu_y)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -72,6 +97,8 @@ while True:
                             selected_square_piece = selected_square
                         if selected_square in available_moves:
                             board.move_piece(selected_square_piece,selected_square)
+                            move = board.get_notation(selected_square[0],selected_square[1])
+                            move_history.append(move)
                             board.is_highlight = False
                     else:
                         if board.board[row][col]=="bp":
@@ -80,6 +107,8 @@ while True:
                             selected_square_piece = selected_square
                         if selected_square in available_moves:
                             board.move_piece(selected_square_piece, selected_square)
+                            move = board.get_notation(selected_square[0], selected_square[1])
+                            move_history.append(move)
                             board.is_highlight = False
 
                 else:
@@ -89,29 +118,54 @@ while True:
 
     if current_state == "menu":
         background = pygame.image.load("images\\Chess_GameBoard.png").convert()
-        background = pygame.transform.scale(background, (800, 600))
+        background = pygame.transform.scale(background, (800, 620))
         screen.blit(background, (0, 0))
         screen.blit(dark_overlay, (0, 0))
         menu_surface.fill((255, 255, 255))
         draw_menu(menu_surface)
         menu_x = mouse_pos[0] - (800//2 - 200)
-        menu_y = mouse_pos[1] - (600//2 - 200)
+        menu_y = mouse_pos[1] - (620//2 - 200)
         menu_mouse_pos = (menu_x, menu_y)
         for btn in buttons:
             btn.draw(menu_surface, menu_mouse_pos,font_btn)
-        screen.blit(menu_surface, (800//2 - 200, 600//2 - 200))
+        screen.blit(menu_surface, (800//2 - 200, 620//2 - 200))
     elif current_state == "play":
         background = pygame.image.load("images\\New_Chess_GameBoard.png").convert()
         background = pygame.transform.scale(background, (600, 600))
         screen.blit(background, (200, 0))
-        side_menu = pygame.Surface((200, 600))
+        side_menu = pygame.Surface((200, 620))
         side_menu.fill((255, 255, 255))
         screen.blit(side_menu, (0, 0))
+        coordinate_down = pygame.Surface((800, 20))
+        coordinate_down.fill((255, 255, 255))
+        screen.blit(coordinate_down, (0, 600))
         menu_x = mouse_pos[0]
         menu_y = mouse_pos[1] - 400
         menu_mouse_pos = (menu_x, menu_y)
         return_btn.draw(side_menu, menu_mouse_pos,font_btn)
         screen.blit(side_menu, (0, 400))
+        board.draw_coordinates(screen, font_coordinates)
+
+        for i in range(0, len(move_history), 2):
+
+            move_number = i // 2 + 1
+
+            white_move = move_history[i]
+
+            if i + 1 < len(move_history):
+                black_move = move_history[i + 1]
+            else:
+                black_move = ""
+
+            text = f"{move_number}. {white_move} {black_move}"
+
+            text_surface = font_moves.render(text, True, (0, 0, 0))
+
+            screen.blit(
+                text_surface,
+                (20, (i // 2) * 30)
+            )
+
         if board.is_highlight:
             board.highlight_square(screen)
             moves = board.get_pawn_moves()

@@ -1,5 +1,6 @@
 import pygame
 
+
 class Board:
     def __init__(self):
         self.x = 200
@@ -35,6 +36,28 @@ class Board:
                         (x, y)
                     )
 
+    def draw_coordinates(self, surface, font):
+        letters = "abcdefgh"
+
+        # Letters: a b c d e f g h
+        for col in range(8):
+            x = self.x + col * self.square_size + self.square_size // 2
+            y = self.y + 8 * self.square_size + 7
+            text = font.render(letters[col], True, (0, 0, 0))
+            text_rect = text.get_rect(center=(x, y))
+            surface.blit(text, text_rect)
+        # Numbers: 8 7 6 5 4 3 2 1
+        for row in range(8):
+            x = self.x - 10
+            y = self.y + row * self.square_size + self.square_size // 2
+            text = font.render(str(8 - row), True, (0, 0, 0))
+            text_rect = text.get_rect(center=(x, y))
+            surface.blit(text, text_rect)
+
+    def get_notation(self,row,col):
+        letters = "abcdefgh"
+        return letters[col] + str(8 - row)
+
     def move_piece(self, start, end):
         if self.turn == "Player1":
             self.turn = "Player2"
@@ -50,14 +73,20 @@ class Board:
         attacks = []
         row = self.row
         col = self.col
-        if self.board[row][col] == "wp" and \
-                (self.board[row - 1][col - 1] is not None or
-                self.board[row - 1][col + 1] is not None):
-            if self.board[row - 1][col - 1].startswith("b"):
-                attacks.append(((row - 1), (col - 1)))
-            if self.board[row - 1][col + 1].startswith("b"):
-                attacks.append(((row - 1), (col + 1)))
-
+        if self.board[row][col] == "wp":
+            if self.board[row - 1][col - 1] is not None:
+                if self.board[row - 1][col - 1].startswith("b"):
+                    attacks.append(((row - 1), (col - 1)))
+            if self.board[row - 1][col + 1] is not None:
+                if self.board[row - 1][col + 1].startswith("b"):
+                    attacks.append(((row - 1), (col + 1)))
+        elif self.board[row][col] == "bp":
+            if self.board[row + 1][col - 1] is not None:
+                if self.board[row + 1][col - 1].startswith("w"):
+                    attacks.append(((row + 1), (col - 1)))
+            if self.board[row + 1][col + 1] is not None:
+                if self.board[row + 1][col + 1].startswith("w"):
+                    attacks.append(((row + 1), (col + 1)))
         return attacks
 
     def get_pawn_moves(self):
