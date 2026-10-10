@@ -68,4 +68,4 @@ The target for a stable release is approximately within the next year.
 
 ---
 
-*Developed with ❤️ by Sajjad Saljoughi*
+*Developed by Sajjad Saljoughi*
