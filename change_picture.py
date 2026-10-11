@@ -44,31 +44,23 @@ for row in range(2):
 
         crop = image[y:y + piece_height, x:x + piece_width]
 
-        # --------------------------------
-        # Create transparency mask
-        # --------------------------------
-
         gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
 
-        # Black pieces
+
         if row == 1:
             mask = gray < 150
 
-        # White pieces
         else:
             b, g, r = cv2.split(crop)
 
-            # White chess pieces have a warm color
+
             mask = (r - b > 15) & (r > 120)
 
         mask = mask.astype(np.uint8) * 255
 
-        # Make edges smoother
+
         mask = cv2.GaussianBlur(mask, (5, 5), 0)
 
-        # --------------------------------
-        # Find the piece
-        # --------------------------------
 
         points = cv2.findNonZero(mask)
 
@@ -81,9 +73,6 @@ for row in range(2):
         piece = crop[y:y+h, x:x+w]
         mask = mask[y:y+h, x:x+w]
 
-        # --------------------------------
-        # Resize piece
-        # --------------------------------
 
         max_size = 58
 
