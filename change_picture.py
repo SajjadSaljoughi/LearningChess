@@ -23,8 +23,6 @@ names = [
     "king_black"
 ]
 
-
-# Size of each piece area in the original image
 piece_width = 230
 piece_height = 370
 
@@ -96,10 +94,6 @@ for row in range(2):
             interpolation=cv2.INTER_AREA
         )
 
-        # --------------------------------
-        # Create 64x64 transparent image
-        # --------------------------------
-
         result = np.zeros((64, 64, 4), dtype=np.uint8)
 
         x = (64 - new_width) // 2
@@ -107,10 +101,6 @@ for row in range(2):
 
         result[y:y+new_height, x:x+new_width, :3] = piece
         result[y:y+new_height, x:x+new_width, 3] = mask
-
-        # --------------------------------
-        # Save
-        # --------------------------------
 
         filename = f"pieces/{names[row * 6 + col]}.png"
 
