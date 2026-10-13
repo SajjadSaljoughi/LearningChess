@@ -16,12 +16,6 @@ This project is an interactive chess learning application developed by Sajjad Sa
 *   **Language:** Python
 *   **Library:** Pygame
 
-## 📂 Project Structure
-
-The project includes necessary assets organized into folders:
-*   `images/`: Contains all visual assets for the application (e.g., chess board, menu elements).
-*   Other folders might be added as the project evolves.
-
 ## 🚀 Getting Started & Installation
 
 This application is intended to be distributed as a standalone Windows executable (`.exe` file).
